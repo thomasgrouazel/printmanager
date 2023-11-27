@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Modèles, Variantes et Versions</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tree.css' %}">
+    <script src="{% static 'js/modele_detail.js' %}" defer></script>
+</head>
+<body>
+
+<nav id="navbar">
+    <button class="button-52" id="btnOpenVarianteModal" role="button">Nouvelle Variante</button>
+
+    <!-- Modal pour ajouter une nouvelle Variante -->
+    <div id="varianteModal" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <h2>Ajouter une Variante</h2>
+            <form action="{% url 'add_variante' modele.uuid %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ variante_form.as_p }}
+                <button type="submit">Ajouter</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="tree">
+        <ul>
+            {% for variante in modele.variantes.all %}
+                <li>
+                    {{ variante.name }}
+                    <button class="button-80" id="btnOpenVersionModal-{{ variante.uuid }}" role="button">Ajouter une Version</button>
+
+                    <!-- Modal pour ajouter une nouvelle Version -->
+                    <div id="versionModal-{{ variante.uuid }}" class="modal">
+                        <div class="modal-content">
+                            <button class="close">&times;</button>
+                            <h2>Ajouter une Version</h2>
+                            <form action="{% url 'add_version' variante.uuid %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ version_form.as_p }}
+                                <button type="submit">Ajouter</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <ul>
+                        {% for version in variante.versions.all %}
+                            <li>
+                                {{ version.name }}
+                                <button class="button-80" id="btnOpenEditModal-{{ version.uuid }}" role="button">Modifier</button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</nav>
+
+<main id="details-container">
+    <!-- Les détails de la variante ou de la version sélectionnée seront affichés ici -->
+    <div id="details">
+        <!-- Les informations seront injectées ici par JavaScript -->
+    </div>
+</main>
+
+<!-- Modal pour éditer une Variante ou une Version -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <button class="close">&times;</button>
+        <h2>Modifier</h2>
+        <form id="editForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Les champs de formulaire seront injectés ici par JavaScript -->
+        </form>
+    </div>
+</div>
+
+<script>
+    // Le code JavaScript pour gérer l'ouverture/fermeture des modaux,
+    // la sélection des éléments dans l'arbre,
+    // et l'affichage des détails sera ici.
+</script>
+
+</body>
+</html>

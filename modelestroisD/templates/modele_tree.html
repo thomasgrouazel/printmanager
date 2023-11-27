@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modèle Data Tree</title>
+    <link rel="stylesheet" href="{% static 'css/tree.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+</head>
+<body>
+    <div class="flex">
+        
+        <div class="navbar-tree">
+            <button id="btn-add-variante" data-modele-uuid="{{ modele.uuid }}" class="button-52">Ajouter une Variante</button>
+            <ul id="myUL">
+                {% for variante in modele.variantes.all %}
+                <li class="parent">
+                    <span class="caret">{{ variante.name }}</span>
+                    <button class="btn-add-version" data-variante-uuid="{{ variante.uuid }}">+</button>
+                    <button class="btn-edit-variante" data-variante-uuid="{{ variante.uuid }}">✎</button>
+                    <button class="btn-delete-variante" data-variante-uuid="{{ variante.uuid }}">X</button>
+                    <ul class="nested">
+                        {% for version in variante.versions.all %}
+                        <li class="version-name" data-version-uuid="{{ version.uuid }}">
+                            {{ version.name }}
+                            <button class="btn-edit-version" data-version-uuid="{{ version.uuid }}">✎</button>
+                            <button class="btn-delete-version" data-version-uuid="{{ version.uuid }}">X</button>
+                            <button class="btn-toggle-favorite" data-version-uuid="{{ version.uuid }}" data-is-favorite="{{ version.is_favorite|yesno:'true,false' }}"></button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div id="content-details">
+            
+        </div>
+    </div>
+   
+    <div id="versionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Ajouter une version</h2>
+            <form id="versionForm" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="submit-button">Ajouter la version</button>
+            </form>
+        </div>
+    </div>
+ 
+    <div id="varianteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Éditer la variante</h2>
+            <form id="varianteForm" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+            </form>
+            <button type="submit" class="submit-button">Éditer la variante</button>
+        </div>
+    </div>
+
+    <div id="editVersionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Éditer la version</h2>
+            <form id="versionForm" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="submit-button">Éditer la version</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addVarianteModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Ajouter une Variante</h2>
+        <form id="addVarianteForm" action="{% url 'add_variante' modele.uuid %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}  
+            <button type="submit" class="submit-button">Ajouter</button>
+        </form>
+    </div>
+</div>
+    
+    <script src="{% static 'js/logic.js' %}"></script>
+</body>
+</html>

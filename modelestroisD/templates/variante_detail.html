@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Détails de la variante : {{ variante.name }}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h2>Fiche de la variante: {{ variante.name }}</h2>
+    <p>Date d'ajout: {{ variante.timestamp }}</p>
+    <a href="{% url 'modele_detail' variante.modele.uuid %}" class="btn btn-primary">Retour au modèle</a>
+    <button class="button-52" id="btnOpenVersionModal" role="button">Ajouter une version</button>
+
+    <div id="versionModal" class="modal">
+        <div class="modal-content">
+            <button class="close" class="close">&times;</button>
+                <h2>Ajouter une version</h2>
+                <form action="{% url 'add_version' variante.uuid %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Ajouter</button>
+                </form>
+        </div>    
+    </div>
+
+    <h3>Versions</h3>
+    <div class="card-container">
+        {% for version in variante.versions.all %}
+            <div class="card">
+                <div class="card-model">
+                    <h4 class="card-title">{{ version.name }}</h4>
+                    <form action="{% url 'delete_version' version.uuid %}" method="post">
+                        {% csrf_token %}
+                        <a class="button-80" onclick="this.closest('form').submit();">Supprimer</a>
+                    </form>
+                    <a class="button-80" href="{% url 'version_detail' version.uuid %}">Détails</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        const versionModal = document.getElementById("versionModal");
+        const btnOpenVersionModal = document.getElementById("btnOpenVersionModal");
+        const span = document.getElementsByClassName("close")[0];
+        
+        btnOpenVersionModal.onclick = function() {
+            versionModal.style.display = "block";
+        }
+        
+        span.onclick = function() {
+            versionModal.style.display = "none";
+        }
+        
+        window.onclick = function(event) {
+            if (event.target == versionModal) {
+                versionModal.style.display = "none";
+            }
+        }
+    </script>
+    </body>
+</html>

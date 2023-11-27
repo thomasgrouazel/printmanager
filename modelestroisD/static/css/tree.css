@@ -1,0 +1,62 @@
+html, body {
+    height: 100%;
+    margin: 0; 
+}
+
+ul, #myUL {
+    list-style-type: none;
+}
+
+#myUL {
+    margin-left: 10px;
+    padding: 0;
+}
+
+.caret {
+    cursor: pointer;
+    user-select: none;
+}
+
+.caret::before {
+    content: "\25B6";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.caret-down::before {
+    transform: rotate(90deg);
+}
+
+.nested {
+    display: none;
+}
+
+.active {
+    display: block;
+}
+
+.version-name:hover {
+    cursor: pointer;
+    color: #007bff; 
+}
+  
+.flex {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.navbar-tree {
+    width: 25%; 
+    height: 100vh;
+    font-size: 30px;
+    border-right: 2px solid black; 
+    box-sizing: border-box;
+}
+  
+.content-details {
+    width: 75%;
+    height: 100vh; 
+}

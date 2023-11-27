@@ -1,0 +1,102 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Liste des modèles</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Liste des modèles</h1>
+    <form method="GET" action="{% url 'modele_list' %}">
+        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Filtrer les modèles">
+        <input type="submit" value="Rechercher">
+    </form>
+    
+    <button class="button-52" id="btnOpenModal" role="button">Ajouter un modèle</button>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal()">&times;</button>
+            <h2>Ajouter un modèle</h2>
+            <form action="{% url 'add_modele' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Ajouter">
+            </form>            
+        </div>
+    </div>
+
+    <div class="card-container">
+        {% for modele in modeles %}
+            <div >
+                <div class="card-model">
+                    <div class="card-content">
+                        <img src="{{ modele.image.url }}" alt="{{ modele.name }}">
+                        <h3 class="card-title">{{ modele.name }}</h3>
+                        <p class="card-description">Date d'ajout: {{ modele.timestamp }}</p>
+                        <p class="card-comment">Description: {{ modele.description }}</p>
+                        <button class="button-80" onclick="openEditModal(event, '{{ modele.uuid }}')">Modifier</button>
+                        <form action="{% url 'delete_modele' modele.uuid %}" method="post">
+                            {% csrf_token %}
+                            <a class="button-80" onclick="event.stopPropagation(); this.closest('form').submit();">Supprimer</a>
+                            <a class="button-80" href="{% url 'modele_tree' modele.uuid %}">Détails</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        
+            <div id="editModal-{{ modele.uuid }}" class="modal edit-modal">
+                <div class="modal-content">
+                    <button class="close" onclick="closeEditModal('{{ modele.uuid }}')">&times;</button>
+                    <h2>Modifier le modèle</h2>
+                    <form action="{% url 'edit_modele' modele.uuid %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ modele.edit_form.as_p }}
+                        <input type="submit" value="Modifier">
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        const modal = document.getElementById("myModal");
+        const btnOpenModal = document.getElementById("btnOpenModal");
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        function closeEditModal(uuid) {
+            const editModal = document.getElementById(`editModal-${uuid}`);
+            editModal.style.display = "none";
+        }
+        function openEditModal(event, uuid) {
+            event.stopPropagation();
+            const editModal = document.getElementById(`editModal-${uuid}`);
+            if(editModal) {
+                editModal.style.display = "block";
+            } else {
+                console.error(`Modal with ID editModal-${uuid} not found.`);
+            }
+        }
+
+        btnOpenModal.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            } else {
+                const editModals = document.querySelectorAll('.edit-modal');
+                editModals.forEach(function(editModal) {
+                    if (event.target == editModal) {
+                        editModal.style.display = "none";
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
